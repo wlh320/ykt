@@ -80,7 +80,7 @@ var breakfast_analyse = function(data) {
         // check if it is breakfast
         if (time >= BF_EARLIST_TIME && time <= BF_LATEST_TIME &&
         (place.indexOf('苑') >= 0 || place.indexOf('餐') >= 0 ||
-        place.indexOf('超市') >= 0)) {
+        place.indexOf('超市') >= 0 || place.indexOf('点心') >= 0)) {
             bfMap[date]++;
             if (time < min_bf_time) min_bf_time = time;
             if (time > max_bf_time) max_bf_time = time;

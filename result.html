@@ -9,11 +9,20 @@
     </head>
     <body>
         <h1>一卡通流水分析</h1>
-        <p>共 <span id="num"></span> 条流水记录</p>
+        <p>共 <span id="costCnt"></span> 条流水记录</p>
         <p>共花费:<span id="cost"></span>元</p>
         <p>共充值:<span id="charge"></span>元</p>
-
-        <p>其他尚未完成,美化以后再说</p>
+        <p>最多一次花费了<span id="maxCost"></span>元</p>
+        <p>最多一次充值了<span id="maxCharge"></span>元</p>
+        <hr>
+        <h1>早餐情况分析</h1>
+        <p><b>我们暂且定义 04:00:00 - 10:00:00 之间的饭叫早饭</b></p>
+        <p>所有记录一共包括<span id="dateCnt"></span>天</p>
+        <p>你有<span id="bfCnt"></span>天吃了早餐</p>
+        <p>最早早餐时间:<span id="minbftime"></span></p>
+        <p>最晚早餐时间:<span id="maxbftime"></span></p>
+        <hr>
+        <p>其他尚未完成,如果看到合适的js库会过来美化一下的XD</p>
 
         <script src="analyse.js"></script>
         <script>analyse(data.data);</script>

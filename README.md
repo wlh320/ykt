@@ -4,7 +4,7 @@
 
 ## 用法
 
-1. 登录 [一卡通管理平台](yikatong.tongji.edu.cn)
+1. 登录 [一卡通管理平台](http://yikatong.tongji.edu.cn)
 
 2. 点击 "余额查询" 在表格的 "校园卡账户" 可以看到你的一卡通的编号,以后会用到
 

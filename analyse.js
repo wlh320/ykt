@@ -1,31 +1,12 @@
 var analyse = function(data) {
-
-    // 1. cost analyse
-    var ui_costCnt = document.getElementById('costCnt');
-    var ui_cost = document.getElementById('cost');
-    var ui_charge = document.getElementById('charge');
-    var ui_maxCost = document.getElementById('maxCost');
-    var ui_maxCharge = document.getElementById('maxCharge');
-
+    data = data.rows
     var cost_res = cost_analyse(data);
-    ui_costCnt.innerText = cost_res.costCnt.toString();
-    ui_cost.innerText = cost_res.cost.toString();
-    ui_charge.innerText = cost_res.charge.toString();
-    ui_maxCost.innerText = cost_res.maxCost.toString();
-    ui_maxCharge.innerText = cost_res.maxCharge.toString();
-
-    // 2. breakfast analyse
-    var ui_dateCnt = document.getElementById('dateCnt');
-    var ui_bfCnt = document.getElementById('bfCnt');
-    var ui_minbftime = document.getElementById('minbftime');
-    var ui_maxbftime = document.getElementById('maxbftime');
-
     var bf_res = breakfast_analyse(data);
-    ui_dateCnt.innerText = bf_res.dateCnt.toString();
-    ui_bfCnt.innerText = bf_res.bfCnt.toString();
-    ui_minbftime.innerText = bf_res.minbftime.toString();
-    ui_maxbftime.innerText = bf_res.maxbftime.toString();
 
+    return {
+        cost_res: cost_res,
+        bf_res: bf_res
+    }
 }
 
 var cost_analyse = function(data) {
@@ -49,6 +30,8 @@ var cost_analyse = function(data) {
     }
     cost = cost.toFixed(2);
     charge = charge.toFixed(2);
+    maxCost = maxCost.toFixed(2);
+    maxCharge = maxCharge.toFixed(2);
     return {
         'costCnt': costCnt,
         'cost': cost,
@@ -93,3 +76,5 @@ var breakfast_analyse = function(data) {
         'maxbftime': max_bf_time
     }
 }
+
+module.exports = analyse;

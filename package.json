@@ -1,0 +1,20 @@
+{
+  "name": "ykt",
+  "version": "1.0.0",
+  "description": "fetch and analyse data of your tongji ykt",
+  "main": "app.js",
+  "devDependencies": {},
+  "author": "wlh",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.1",
+    "electron": "^1.7.6",
+    "express": "^4.15.4",
+    "request": "^2.82.0",
+    "vue": "^2.4.4",
+    "vue-resource": "^1.3.4"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}

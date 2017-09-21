@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta http-equiv="Access-Control-Allow-Origin" content="*">
+  <title>同济大学一卡通分析</title>
+  <script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/muicss/0.9.15/css/mui.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://cdn.staticfile.org/muicss/0.9.15/js/mui.min.js"></script>
+</head>
+
+<body>
+
+  <header class="mui-appbar mui--z1">
+    <div class="mui-container">
+      <table width="100%">
+        <tr class="mui--appbar-height">
+          <td class="mui--text-title">同济大学 一卡通分析</td>
+        </tr>
+      </table>
+    </div>
+  </header>
+  <div id="app">
+
+    <div id="content-wrapper">
+      <div class="mui--appbar-height"></div>
+      <div class="mui--appbar-height"></div>
+      <div class="mui--text-headline mui--text-center">使用须知</div>
+      <br>
+      <div class="mui--text-headline mui--text-center">
+        <button class="mui-btn mui-btn mui-btn--primary" v-on:click="toggleHelp">{{helpButton}}</button>
+      </div>
+
+      <div id="help" class="mui-panel" v-if="showHelp">
+        <div class="mui--container">
+          <h3>说明</h3>
+          <p>
+            1. 本网站分析的数据来自于同济一卡通综合管理平台http://yikatong.tongji.edu.cn
+          </p>
+
+          <p>
+            2. 数据基于一卡通消费流水，存在的误差在所难免，分析结果仅供参考
+          </p>
+
+          <p>
+            3. 数据的获取是使用用户登录后的cookie, 一卡通网站 cookie 关闭浏览器后失效，因此不会造成安全问题
+          </p>
+
+          <p>
+            4. 本网站郑重承诺仅提供爬取，不会暗中收集用户数据
+          </p>
+          <h3>使用方法</h3>
+          <p>
+            1. 登录同济一卡通综合管理平台http://yikatong.tongji.edu.cn
+          </p>
+
+          <p>
+            2. 登陆成功后查找一卡通网站的<span>cookie</span>, 找到名为 <span>hallticket</span> 的项
+          </p>
+
+          <p>
+            3. 输入下面的输入框中，坐等结果
+          </p>
+        </div>
+      </div>
+
+      <br>
+      <br>
+      <br>
+
+      <div id="info" class="mui-panel" v-if="showInput">
+        <!-- <form class="mui-form"> -->
+        <div class="mui-container">
+          <div class="mui--text-headline">
+            输入 hallticket 和起止日期
+          </div>
+          <div class="mui-textfield">
+            <input v-model="cookie" placeholder="hallticket"></input>
+          </div>
+          <div class="mui-textfield">
+            <input type="date" v-model="sdate"></input>
+            <label>起始日期</label>
+          </div>
+          <div class="mui-textfield">
+            <input type="date" v-model="edate"></input>
+            <label>结束日期</label>
+          </div>
+          <button class="mui-btn mui-btn--primary mui-btn--large" v-on:click="getRes">
+            <span>获取结果！</span>
+          </button>
+        </div>
+        <!-- </form> -->
+      </div>
+
+      <div class="mui-panel" v-if="showWait">
+        <h1> {{ message }} </h1>
+      </div>
+
+      <div class="mui-panel" v-if="showResult">
+        <button v-on:click="retInput" class="mui-btn mui-btn--primary">返回</button>
+        <div class="mui--text-center">
+          <h1>花费情况分析</h1>
+          <p>共 <span>{{res.cost_res.costCnt}}</span> 条流水记录</p>
+          <p>共花费:<span>{{res.cost_res.cost}}</span>元</p>
+          <p>共充值:<span>{{res.cost_res.charge}}</span>元</p>
+          <p>最多一次花费了<span>{{res.cost_res.maxCost}}</span>元</p>
+          <p>最多一次充值了<span>{{res.cost_res.maxCharge}}</span>元</p>
+          <hr>
+          <h1>早餐情况分析</h1>
+          <p><b>我们暂且定义 04:00:00 - 10:00:00 之间的饭叫早饭</b></p>
+          <p>所有记录一共包括<span>{{res.bf_res.dateCnt}}</span>天</p>
+          <p>你有<span>{{res.bf_res.bfCnt}}</span>天吃了早餐</p>
+          <p>最早早餐时间:<span>{{res.bf_res.minbftime}}</span></p>
+          <p>最晚早餐时间:<span>{{res.bf_res.maxbftime}}</span></p>
+          <hr>
+          <p>其他尚未完成,如果看到合适的js库会过来美化一下的XD</p>
+        </div>
+      </div>
+    </div>
+    <br>
+    <br>
+  </div>
+
+  <footer>
+    <div class="mui-container mui--text-center">
+      <p> wlh &copy;2017 All Rights Reserved </p>
+      <p> github: <a href="https://github.com/wlh320/ykt">https://github.com/wlh320/ykt</a></p>
+      <p> 欢迎提出宝贵意见 </p>
+
+    </div>
+
+  </footer>
+
+
+</body>
+<script>
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      sdate: '2014-09-01',
+      edate: new Date().toISOString().slice(0, 10),
+      cookie: '',
+      message: '',
+      res: {
+        cost_res: {
+          costCnt: '0',
+          cost: '0',
+          charge: '0',
+          maxCost: '0',
+          maxCharge: '0',
+        },
+        bf_res: {
+          dateCnt: '0',
+          bfCnt: '0',
+          minbftime: '0',
+          maxbftime: '0'
+        }
+      },
+      showInput: true,
+      showResult: false,
+      showWait: false,
+      showHelp: true,
+      helpButton: '收起',
+
+    },
+    methods: {
+      getRes: function () {
+        this.message = '获取中,请稍后...';
+        this.showWait = true;
+        var data = {
+          'sdate': this.sdate,
+          'edate': this.edate,
+          'cookie': this.cookie
+        }
+        var url = 'http://localhost:3000/analyse'
+        this.$http.post(url, data).then(function (res) {
+          if (res && res.body.code == 200) {
+            this.res = res.body.msg;
+            this.showInput = false;
+            this.showWait = false;
+            this.showResult = true;
+          } else {
+            this.message = '获取失败';
+          }
+        }, function (err) {
+          this.message = '获取失败';
+        });
+      },
+
+      retInput: function () {
+        this.showResult = false;
+        this.showInput = true;
+      },
+
+      toggleHelp: function () {
+        this.showHelp = !this.showHelp;
+        if (this.showHelp) {
+          this.helpButton = '收起'
+        } else {
+          this.helpButton = '展开'
+        }
+      }
+    }
+  })
+
+</script>
+
+</html>

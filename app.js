@@ -1,10 +1,14 @@
 const electron = require('electron')
-var server = require('./server');
+const fetch = require('./fetch.js')
 
 var app = electron.app;
 var Window = electron.BrowserWindow;
-
+var ipcMain = electron.ipcMain;
 var mainWindow = null;
+
+ipcMain.on('fetch-data', (event, arg) => {
+  fetch(arg.cookie, arg.sdate, arg.edate, event.sender);
+});
 
 app.on('ready', function() {
 
@@ -15,8 +19,7 @@ app.on('ready', function() {
         resizable: true
     });
 
-    mainWindow.loadURL('http://localhost:3000');
-
+    mainWindow.loadURL(`file://${__dirname}/index.html`);
     mainWindow.focus();
 });
 

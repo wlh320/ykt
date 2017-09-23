@@ -25,6 +25,7 @@
     </div>
   </header>
   <div id="app">
+    
     <div id="content-wrapper">
       <div class="mui--appbar-height"></div>
       <div class="mui--appbar-height"></div>
@@ -45,18 +46,21 @@
             3. 数据的获取是使用用户登录后的cookie, 一卡通网站 cookie 关闭浏览器后失效，因此不会造成安全问题
           </p>
           <p>
-            4. 本网站郑重承诺仅提供爬取，不会暗中收集用户数据
+            4. 本软件郑重承诺仅提供爬取，不会暗中收集用户数据
+          </p>
+          <p>
+            5. 注意：由于数据源在内网，因此只能在 同济/黄渡理工 的校园内网使用
           </p>
           <hr>
           <h3>使用方法</h3>
           <p>
-            1. 登录同济一卡通综合管理平台http://yikatong.tongji.edu.cn
+            1. 点击下面的 获取hallticket 按钮
           </p>
           <p>
-            2. 登陆成功后查找一卡通网站的<span>cookie</span>, 找到名为 <span>hallticket</span> 的项
+            2. 在新打开的页面进行同济大学统一认证登录
           </p>
           <p>
-            3. 输入下面的输入框中，坐等结果
+            3. 设置起始日期, 点击获取按钮, 坐等结果
           </p>
         </div>
       </div>
@@ -69,10 +73,10 @@
       </div>
       <br>
       <div id="info" class="mui-panel" v-if="showInput">
-        <!-- <form class="mui-form"> -->
         <div class="mui-container">
           <div class="mui-textfield">
-            <input v-model="cookie" placeholder="hallticket"></input>
+            <button v-on:click="getHt" class="mui-btn mui-btn--primary" v-bind:disabled='cookieSuccess' v-bind:class="{'mui-btn--danger': cookieError }">{{ cookie }}</button>
+            <label>hallticket</label>
           </div>
           <div class="mui-textfield">
             <input type="date" v-model="sdate"></input>
@@ -88,7 +92,6 @@
             </button>
           </div>
         </div>
-        <!-- </form> -->
       </div>
 
       <div class="mui-panel" v-if="showWait">
@@ -100,19 +103,20 @@
         <div class="mui--text-center">
           <h1>花费情况分析</h1>
           <p>共 <span>{{res.cost_res.costCnt}}</span> 条流水记录</p>
-          <p>共花费:<span>{{res.cost_res.cost}}</span>元</p>
-          <p>共充值:<span>{{res.cost_res.charge}}</span>元</p>
-          <p>最多一次花费了<span>{{res.cost_res.maxCost}}</span>元</p>
-          <p>最多一次充值了<span>{{res.cost_res.maxCharge}}</span>元</p>
+          <p>共花费: <span>{{res.cost_res.cost}}</span> 元</p>
+          <p>共充值: <span>{{res.cost_res.charge}}</span> 元</p>
+          <p>最多一次花费了 <span>{{res.cost_res.maxCost}}</span> 元</p>
+          <p>最多一次充值了 <span>{{res.cost_res.maxCharge}}</span> 元</p>
+          <p>你为寝室贡献的电费是 <span>{{res.cost_res.costEle}}</span> 元</p>
           <hr>
           <h1>早餐情况分析</h1>
-          <p><b>我们暂且定义 04:00:00 - 10:00:00 之间的饭叫早饭</b></p>
-          <p>所有记录一共包括<span>{{res.bf_res.dateCnt}}</span>天</p>
-          <p>你有<span>{{res.bf_res.bfCnt}}</span>天吃了早餐</p>
-          <p>最早早餐时间:<span>{{res.bf_res.minbftime}}</span></p>
-          <p>最晚早餐时间:<span>{{res.bf_res.maxbftime}}</span></p>
+          <p><b>(我们暂且定义 04:00:00 - 10:00:00 之间的饭叫早饭)</b></p>
+          <p>所有记录一共包括 <span>{{res.bf_res.dateCnt}}</span> 天</p>
+          <p>你有 <span>{{res.bf_res.bfCnt}}</span> 天吃了早餐</p>
+          <p>最早早餐时间: <span>{{res.bf_res.minbftime}}</span></p>
+          <p>最晚早餐时间: <span>{{res.bf_res.maxbftime}}</span></p>
           <hr>
-          <p>其他尚未完成,如果看到合适的js库会过来美化一下的XD</p>
+          <p>其他尚未完成,有建议联系我</p>
         </div>
       </div>
     </div>
@@ -138,12 +142,15 @@
     data: {
       sdate: '2014-09-01',
       edate: new Date().toISOString().slice(0, 10),
-      cookie: '',
+      cookie: '点击获取 hallticket',
+      cookieSuccess: false,
+      cookieError: false,
       message: '',
       res: {
         cost_res: {
           costCnt: '0',
           cost: '0',
+          costEle: '0',
           charge: '0',
           maxCost: '0',
           maxCharge: '0',
@@ -187,6 +194,9 @@
       retInput: function () {
         this.showResult = false;
         this.showInput = true;
+        this.cookie = '点击获取 hallticket';
+        this.cookieSuccess = false;
+        this.cookieError = false;
       },
 
       toggleHelp: function () {
@@ -196,8 +206,25 @@
         } else {
           this.helpButton = '展开'
         }
+      },
+
+      getHt: function () {
+        ipcRenderer.send('login', {});
+        ipcRenderer.on('hallticket', (event, arg) => {
+          if (arg && arg.code == 200) {
+            this.cookie = arg.ht;
+            this.cookieSuccess = true;
+            this.cookieError = false;
+          } else {
+            this.cookie = arg.ht;
+            this.cookieError = true;
+            this.cookieSuccess = false;
+          }
+        })
       }
     }
   });
+
 </script>
+
 </html>

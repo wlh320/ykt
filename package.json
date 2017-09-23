@@ -1,6 +1,6 @@
 {
   "name": "ykt",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "fetch and analyse data of your tongji ykt",
   "main": "app.js",
   "devDependencies": {

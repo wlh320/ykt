@@ -10,8 +10,9 @@ var analyse = function(data) {
 }
 
 var cost_analyse = function(data) {
-    var cost = 0;
-    var charge = 0;
+    var cost = 0; // cost fee
+    var charge = 0; // charge fee
+    var costEle = 0; // electric fee
     var costCnt = data.length
 
     var maxCost = 0
@@ -20,6 +21,7 @@ var cost_analyse = function(data) {
     for(var i = 0; i < costCnt; ++i) {
         tranamt = data[i].TRANAMT;
         trancode = data[i].TRANCODE;
+        place = data[i].MERCNAME;
         if (tranamt < 0) {
             cost -= tranamt;
             maxCost = Math.max(maxCost, -tranamt);
@@ -27,14 +29,19 @@ var cost_analyse = function(data) {
             charge += tranamt;
             maxCharge = Math.max(maxCharge, tranamt);
         }
+        if (place.indexOf('电控') >= 0) {
+            costEle -= tranamt;
+        }
     }
     cost = cost.toFixed(2);
+    costEle = costEle.toFixed(2);
     charge = charge.toFixed(2);
     maxCost = maxCost.toFixed(2);
     maxCharge = maxCharge.toFixed(2);
     return {
         'costCnt': costCnt,
         'cost': cost,
+        'costEle': costEle,
         'charge': charge,
         'maxCost': maxCost,
         'maxCharge': maxCharge

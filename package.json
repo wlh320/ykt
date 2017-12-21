@@ -14,7 +14,7 @@
     "electron": "^1.7.6"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "electron app.js",
     "build": "electron-packager . --platform=win32 --arch=ia32 --overwrite --ignore=.gitignore"
   }
 }
